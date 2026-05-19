@@ -18,10 +18,10 @@ def main():
         print("python main.py <algoritmo> <arquivo>")
         print()
         print("Exemplos:")
-        print("python main.py bfs labirinto_60x30_20260519.txt")
-        print("python main.py dfs labirinto_60x30_20260519.txt")
-        print("python main.py dijkstra labirinto_60x30_20260519.txt")
-        print("python main.py astar labirinto_60x30_20260519.txt")
+        print("python main.py bfs mapas/labirinto.txt")
+        print("python main.py dfs mapas/caverna.txt")
+        print("python main.py dijkstra mapas/perfeito.txt")
+        print("python main.py astar mapas/labirinto_60x30.txt")
 
         return
 
