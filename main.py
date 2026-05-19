@@ -5,7 +5,7 @@ from loader.maze_loader import MazeLoader
 from algorithms.bfs import BFS
 from algorithms.dfs import DFS
 from algorithms.dijkstra import Dijkstra
-
+from algorithms.astar import AStar
 from metrics.profiler import Profiler
 
 
@@ -27,10 +27,10 @@ def main():
 
     nome_algoritmo = sys.argv[1].lower()
 
+    caminho_arquivo = sys.argv[2]
+    
     # Carrega mapa
-    mapa = MazeLoader.carregar(
-        "mapas/labirinto.txt"
-    )
+    mapa = MazeLoader.carregar(caminho_arquivo)
 
     # Seleção do algoritmo
     algoritmo = None

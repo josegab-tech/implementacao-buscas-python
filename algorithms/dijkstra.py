@@ -6,7 +6,9 @@ class Dijkstra:
     @staticmethod
     def executar(mapa):
 
+        #quantidade de linhas mapa
         linhas = len(mapa)
+        #quantidade colunas mapa
         colunas = len(mapa[0])
 
         inicio = None
@@ -25,9 +27,10 @@ class Dijkstra:
         # Fila de prioridade
         fila = []
 
-        # (custo, posição)
+        # (custo, posição) Sempre remove o menor custo primeiro
         heapq.heappush(fila, (0, inicio))
 
+        #ja visitado
         visitados = set()
 
         # Direções:
@@ -39,10 +42,13 @@ class Dijkstra:
             (0, 1)
         ]
 
+        #Enquanto tiver o que explorar
         while fila:
-
+            
+            #Removendo posiçao com menor custo
             custo, atual = heapq.heappop(fila)
 
+            
             if atual in visitados:
                 continue
 
