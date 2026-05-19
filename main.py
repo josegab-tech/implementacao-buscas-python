@@ -4,6 +4,7 @@ from loader.maze_loader import MazeLoader
 
 from algorithms.bfs import BFS
 from algorithms.dfs import DFS
+from algorithms.dijkstra import Dijkstra
 
 from metrics.profiler import Profiler
 
