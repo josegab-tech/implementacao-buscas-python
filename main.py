@@ -4,8 +4,6 @@ from loader.maze_loader import MazeLoader
 
 from algorithms.bfs import BFS
 from algorithms.dfs import DFS
-from algorithms.dijkstra import Dijkstra
-from algorithms.astar import AStar
 
 from metrics.profiler import Profiler
 
@@ -13,16 +11,16 @@ from metrics.profiler import Profiler
 def main():
 
     # Verifica argumentos
-    if len(sys.argv) < 2:
+    if len(sys.argv) < 3:
 
         print("Uso:")
-        print("python main.py <algoritmo>")
+        print("python main.py <algoritmo> <arquivo>")
         print()
         print("Exemplos:")
-        print("python main.py bfs")
-        print("python main.py dfs")
-        print("python main.py dijkstra")
-        print("python main.py astar")
+        print("python main.py bfs labirinto_60x30_20260519.txt")
+        print("python main.py dfs labirinto_60x30_20260519.txt")
+        print("python main.py dijkstra labirinto_60x30_20260519.txt")
+        print("python main.py astar labirinto_60x30_20260519.txt")
 
         return
 
