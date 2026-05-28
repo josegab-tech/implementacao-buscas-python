@@ -1,92 +1,71 @@
 import heapq
 
-
 class AStar:
 
-    @staticmethod
-    def heuristica(a, b):
-
-        # Distância Manhattan
-        return abs(a[0] - b[0]) + abs(a[1] - b[1])
+    DIRECOES = [(-1, 0), (1, 0), (0, -1), (0, 1)]
 
     @staticmethod
     def executar(mapa):
-
         linhas = len(mapa)
         colunas = len(mapa[0])
 
-        inicio = None
-        fim = None
+        linha_inicio, coluna_inicio = -1, -1
+        linha_fim, coluna_fim = -1, -1
 
-        # Procura entrada e saída
-        for i in range(linhas):
-            for j in range(colunas):
+        # Procura entrada e saída (necessário para a Heurística)
+        for l in range(linhas):
+            for c in range(colunas):
+                if mapa[l][c] == 'E':
+                    linha_inicio, coluna_inicio = l, c
+                elif mapa[l][c] == 'S':
+                    linha_fim, coluna_fim = l, c
 
-                if mapa[i][j] == 'E':
-                    inicio = (i, j)
+        if linha_inicio == -1 or linha_fim == -1:
+            return False
 
-                elif mapa[i][j] == 'S':
-                    fim = (i, j)
-
-        # Fila de prioridade
         fila = []
+        id_inicio = linha_inicio * colunas + coluna_inicio
 
-        # (prioridade, custo, posição)
-        heapq.heappush(fila, (0, 0, inicio))
+        # h inicial (Distância de Manhattan)
+        h_inicial = abs(linha_inicio - linha_fim) + abs(coluna_inicio - coluna_fim)
 
-        visitados = set()
-
-        direcoes = [
-            (-1, 0),
-            (1, 0),
-            (0, -1),
-            (0, 1)
-        ]
+        # Insere: (Custo_Total_F, Custo_Real_G, ID_Celula)
+        heapq.heappush(fila, (h_inicial, 0, id_inicio))
 
         while fila:
+            
+            f, g, atual_id = heapq.heappop(fila)
 
-            prioridade, custo, atual = heapq.heappop(fila)
+            l = atual_id // colunas
+            c = atual_id % colunas
 
-            if atual in visitados:
+            celula = mapa[l][c]
+
+            if celula == 'V':
                 continue
 
-            visitados.add(atual)
-
-            # Encontrou saída
-            if atual == fim:
+            if celula == 'S':
                 return True
 
-            for dx, dy in direcoes:
+            # Marca in-place apenas ao retirar da fila (certeza do menor caminho)
+            if celula == '1' or celula == 'E':
+                mapa[l][c] = 'V'
 
-                nx = atual[0] + dx
-                ny = atual[1] + dy
+            for dl, dc in AStar.DIRECOES:
+                nova_l = l + dl
+                nova_c = c + dc
 
-                if 0 <= nx < linhas and 0 <= ny < colunas:
+                if 0 <= nova_l < linhas and 0 <= nova_c < colunas:
+                    vizinho = mapa[nova_l][nova_c]
 
-                    if mapa[nx][ny] != '#':
+                    if vizinho == '1' or vizinho == 'S':
+                        
+                        novo_g = g + 1
+                        novo_h = abs(nova_l - linha_fim) + abs(nova_c - coluna_fim)
+                        novo_f = novo_g + novo_h
+                        
+                        novo_id = nova_l * colunas + nova_c
 
-                        vizinho = (nx, ny)
-
-                        if vizinho not in visitados:
-
-                            novo_custo = custo + 1
-
-                            heuristica = AStar.heuristica(
-                                vizinho,
-                                fim
-                            )
-
-                            prioridade_total = (
-                                novo_custo + heuristica
-                            )
-
-                            heapq.heappush(
-                                fila,
-                                (
-                                    prioridade_total,
-                                    novo_custo,
-                                    vizinho
-                                )
-                            )
+                        heapq.heappush(fila, (novo_f, novo_g, novo_id))
 
         return False
