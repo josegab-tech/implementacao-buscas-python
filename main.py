@@ -41,10 +41,10 @@ def main():
     elif nome_algoritmo == "dfs":
         algoritmo = DFS
 
-    elif nome_algoritmo == "dijkstra": #ainda para implementar
+    elif nome_algoritmo == "dijkstra": 
         algoritmo = Dijkstra
 
-    elif nome_algoritmo == "astar": #ainda para implementar
+    elif nome_algoritmo == "astar": 
         algoritmo = AStar
 
     else:

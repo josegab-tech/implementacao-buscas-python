@@ -1,81 +1,71 @@
 import heapq
 
-
 class Dijkstra:
+
+    DIRECOES = [(-1, 0), (1, 0), (0, -1), (0, 1)]
 
     @staticmethod
     def executar(mapa):
-
-        #quantidade de linhas mapa
         linhas = len(mapa)
-        #quantidade colunas mapa
         colunas = len(mapa[0])
 
-        inicio = None
-        fim = None
+        linha_inicio, coluna_inicio = -1, -1
 
-        # Procura entrada e saída
-        for i in range(linhas):
-            for j in range(colunas):
+        # Procura entrada
+        for l in range(linhas):
+            for c in range(colunas):
+                if mapa[l][c] == 'E':
+                    linha_inicio, coluna_inicio = l, c
+                    break
+            if linha_inicio != -1:
+                break
 
-                if mapa[i][j] == 'E':
-                    inicio = (i, j)
+        if linha_inicio == -1:
+            return False
 
-                elif mapa[i][j] == 'S':
-                    fim = (i, j)
-
-        # Fila de prioridade
+        # Fila de prioridade (Min-Heap nativo em C)
         fila = []
 
-        # (custo, posição) Sempre remove o menor custo primeiro
-        heapq.heappush(fila, (0, inicio))
+        # Truque de performance: Converte coordenada 2D para ID único 1D
+        id_inicio = linha_inicio * colunas + coluna_inicio
+        
+        # Insere apenas inteiros puros: (custo, id_celula)
+        heapq.heappush(fila, (0, id_inicio))
 
-        #ja visitado
-        visitados = set()
-
-        # Direções:
-        # cima, baixo, esquerda, direita
-        direcoes = [
-            (-1, 0),
-            (1, 0),
-            (0, -1),
-            (0, 1)
-        ]
-
-        #Enquanto tiver o que explorar
         while fila:
             
-            #Removendo posiçao com menor custo
-            custo, atual = heapq.heappop(fila)
+            custo, atual_id = heapq.heappop(fila)
 
-            
-            if atual in visitados:
+            # Desempacota o ID 1D de volta para linha e coluna
+            l = atual_id // colunas
+            c = atual_id % colunas
+
+            celula = mapa[l][c]
+
+            # Lazy Dijkstra: Ignora se já visitamos por um caminho mais barato
+            if celula == 'V':
                 continue
 
-            visitados.add(atual)
-
             # Encontrou saída
-            if atual == fim:
+            if celula == 'S':
                 return True
 
-            for dx, dy in direcoes:
+            # Marca visitado in-place (Nivelamento com C e Java)
+            if celula == '1' or celula == 'E':
+                mapa[l][c] = 'V'
 
-                nx = atual[0] + dx
-                ny = atual[1] + dy
+            for dl, dc in Dijkstra.DIRECOES:
+                nova_l = l + dl
+                nova_c = c + dc
 
-                if 0 <= nx < linhas and 0 <= ny < colunas:
+                if 0 <= nova_l < linhas and 0 <= nova_c < colunas:
+                    vizinho = mapa[nova_l][nova_c]
 
-                    if mapa[nx][ny] != '#':
-
-                        vizinho = (nx, ny)
-
-                        if vizinho not in visitados:
-
-                            novo_custo = custo + 1
-
-                            heapq.heappush(
-                                fila,
-                                (novo_custo, vizinho)
-                            )
+                    # Nivelamento do padrão de caracteres ('1' caminho livre, '0' parede)
+                    if vizinho == '1' or vizinho == 'S':
+                        novo_custo = custo + 1
+                        novo_id = nova_l * colunas + nova_c
+                        
+                        heapq.heappush(fila, (novo_custo, novo_id))
 
         return False
