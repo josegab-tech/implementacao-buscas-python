@@ -1,89 +1,56 @@
 import sys
 
 from loader.maze_loader import MazeLoader
-
 from algorithms.bfs import BFS
 from algorithms.dfs import DFS
 from algorithms.dijkstra import Dijkstra
 from algorithms.astar import AStar
 from metrics.profiler import Profiler
 
-
 def main():
 
-    # Verifica argumentos
-    if len(sys.argv) < 3:
-
-        print("Uso:")
-        print("python main.py <algoritmo> <arquivo>")
-        print()
-        print("Exemplos:")
-        print("python main.py bfs mapas/labirinto.txt")
-        print("python main.py dfs mapas/caverna.txt")
-        print("python main.py dijkstra mapas/perfeito.txt")
-        print("python main.py astar mapas/labirinto_60x30.txt")
-
+    if len(sys.argv) < 2:
+        print("Uso: python main.py mapas/labirinto.txt")
         return
 
-    nome_algoritmo = sys.argv[1].lower()
-
-    caminho_arquivo = sys.argv[2]
+    caminho_arquivo = sys.argv[1]
     
     # Carrega mapa
     mapa = MazeLoader.carregar(caminho_arquivo)
+    
+    linhas = len(mapa)
+    colunas = len(mapa[0]) if linhas > 0 else 0
 
-    # Seleção do algoritmo
-    algoritmo = None
+    print("=========================================================================")
+    print(f" Mapa: {linhas} x {colunas} | Celulas: {linhas * colunas}")
+    print("=========================================================================\n")
 
-    if nome_algoritmo == "bfs":
-        algoritmo = BFS
+    # Fila de Execução Automática
+    algoritmos = [
+        ("DFS", DFS),
+        ("BFS", BFS),
+        ("Dijkstra", Dijkstra),
+        ("A*", AStar)
+    ]
 
-    elif nome_algoritmo == "dfs":
-        algoritmo = DFS
+    # Cabeçalho da Tabela
+    print(f"{'Algoritmo':<10} | {'Media (ms)':<10} | {'Min (ms)':<10} | {'Max (ms)':<10} | {'IPS':<10} | {'Memoria (B)':<12}")
+    print("-" * 75)
 
-    elif nome_algoritmo == "dijkstra": 
-        algoritmo = Dijkstra
+    for nome, motor in algoritmos:
+        
+        # Mantém as matrizes virgens para cada algoritmo
+        mapa_oficial = [linha[:] for linha in mapa]
+        mapa_warmup = [linha[:] for linha in mapa]
 
-    elif nome_algoritmo == "astar": 
-        algoritmo = AStar
+        resultado = Profiler.avaliar(motor, mapa_oficial, mapa_warmup)
+        
+        # Iterações por segundo (IPS)
+        ips = 1000.0 / resultado.media_milis if resultado.media_milis > 0 else 0.0
 
-    else:
-        print("Algoritmo inválido.")
-        print("Use: bfs, dfs, dijkstra ou astar")
+        print(f"{nome:<10} | {resultado.media_milis:<10.4f} | {resultado.min_milis:<10.4f} | {resultado.max_milis:<10.4f} | {ips:<10.2f} | {resultado.memoria_bytes:<12}")
 
-        return
-
-    # Clones do mapa
-    mapa_oficial = [linha[:] for linha in mapa]
-
-    mapa_warmup = [linha[:] for linha in mapa]
-
-    # Benchmark
-    resultado = Profiler.avaliar(
-        algoritmo,
-        mapa_oficial,
-        mapa_warmup
-    )
-
-    # Resultado
-    print()
-    print("=== RESULTADO ===")
-    print()
-
-    print("Algoritmo:",
-          nome_algoritmo.upper())
-
-    print("Encontrou saída:",
-          resultado.encontrou_saida)
-
-    print("Tempo:",
-          resultado.tempo_milis,
-          "ms")
-
-    print("Memória:",
-          resultado.memoria_bytes,
-          "bytes")
-
+    print("=========================================================================")
 
 if __name__ == "__main__":
     main()
