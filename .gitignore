@@ -1,0 +1,21 @@
+# Ambientes Virtuais (NUNCA suba a pasta do ambiente virtual)
+.venv/
+venv/
+env/
+ENV/
+
+# Bytecode e cache de execução (Python e Numba)
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.numba_cache/
+
+# Configurações de IDEs e editores (VS Code, PyCharm, etc.)
+.vscode/
+.idea/
+*.swp
+
+# Arquivos temporários do Sistema Operacional
+.DS_Store
+Thumbs.db
