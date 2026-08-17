@@ -12,7 +12,7 @@ class Profiler:
         # 1. Warm-up
         for _ in range(1000):
 
-            clone = [linha[:] for linha in mapa_warmup]
+            clone = mapa_warmup.copy()
 
             algoritmo.executar(clone)
 

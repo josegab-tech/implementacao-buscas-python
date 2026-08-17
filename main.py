@@ -54,9 +54,10 @@ def main():
         return
 
     # Clones do mapa
-    mapa_oficial = [linha[:] for linha in mapa]
+ # Clones do mapa
+    mapa_oficial = mapa.copy()
 
-    mapa_warmup = [linha[:] for linha in mapa]
+    mapa_warmup = mapa.copy()
 
     # Benchmark
     resultado = Profiler.avaliar(
