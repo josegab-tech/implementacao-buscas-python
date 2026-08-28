@@ -1,12 +1,9 @@
 class BenchmarkResult:
 
-    def __init__(self, encontrou_saida, tempo_milis, memoria_bytes):
-        
-        #indica se encontrou caminho até saída
+    def __init__(self, encontrou_saida, media_milis, min_milis, max_milis, iteracoes, memoria_bytes):
         self.encontrou_saida = encontrou_saida
-        
-        #Tempo de execução em milissegundos
-        self.tempo_milis = tempo_milis
-        
-        #Memória utilizada em KB
+        self.media_milis = media_milis
+        self.min_milis = min_milis
+        self.max_milis = max_milis
+        self.iteracoes = iteracoes
         self.memoria_bytes = memoria_bytes
