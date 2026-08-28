@@ -9,9 +9,9 @@ class Profiler:
     @staticmethod
     def avaliar(algoritmo, mapa_oficial, mapa_warmup):
         
-        # 1. Warm-up (Reduzido para 3 para não travar em mapas de 1000x1000)
+        # 1. Warm-up (Reduzido para 3 para não travar em mapas muito grandes)
         for _ in range(3):
-            clone = [linha[:] for linha in mapa_warmup]
+            clone = mapa_warmup.copy()
             algoritmo.executar(clone)
 
         # Variáveis Estatísticas
@@ -21,7 +21,7 @@ class Profiler:
         iteracoes = 0
         encontrou_saida = False
 
-        # 2. Início captura de memória (Pão superior do sanduíche)
+        # 2. Início captura de memória
         tracemalloc.start()
         memoria_antes, _ = tracemalloc.get_traced_memory()
 
@@ -30,8 +30,8 @@ class Profiler:
 
         while (time.perf_counter() - inicio_global) < Profiler.TEMPO_LIMITE_SEGUNDOS:
             
-            # Restaura o mapa FORA do cronômetro!
-            clone = [linha[:] for linha in mapa_oficial]
+            # Restaura o mapa FORA do cronômetro usando cópia do NumPy!
+            clone = mapa_oficial.copy()
 
             # ⏱️ LIGA O CRONÔMETRO
             inicio_iteracao = time.perf_counter_ns()
@@ -50,7 +50,7 @@ class Profiler:
             tempo_acumulado_ns += (fim_iteracao - inicio_iteracao)
             iteracoes += 1
 
-        # 4. Fim captura de memória (Pão inferior do sanduíche)
+        # 4. Fim captura de memória
         memoria_depois, pico = tracemalloc.get_traced_memory()
         tracemalloc.stop()
 

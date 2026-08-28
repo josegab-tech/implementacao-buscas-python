@@ -15,11 +15,11 @@ def main():
 
     caminho_arquivo = sys.argv[1]
     
-    # Carrega mapa
+    # Carrega mapa (Agora é um array NumPy)
     mapa = MazeLoader.carregar(caminho_arquivo)
     
-    linhas = len(mapa)
-    colunas = len(mapa[0]) if linhas > 0 else 0
+    # Pega as dimensões direto do NumPy
+    linhas, colunas = mapa.shape
 
     print("=========================================================================")
     print(f" Mapa: {linhas} x {colunas} | Celulas: {linhas * colunas}")
@@ -39,16 +39,16 @@ def main():
 
     for nome, motor in algoritmos:
         
-        # Mantém as matrizes virgens para cada algoritmo
-        mapa_oficial = [linha[:] for linha in mapa]
-        mapa_warmup = [linha[:] for linha in mapa]
+        # Clonagem rápida e correta usando NumPy
+        mapa_oficial = mapa.copy()
+        mapa_warmup = mapa.copy()
 
         resultado = Profiler.avaliar(motor, mapa_oficial, mapa_warmup)
         
         # Iterações por segundo (IPS)
-        ips = 1000.0 / resultado.media_milis if resultado.media_milis > 0 else 0.0
+        ips = 1000.0 / resultado.media_ms if resultado.media_ms > 0 else 0.0
 
-        print(f"{nome:<10} | {resultado.media_milis:<10.4f} | {resultado.min_milis:<10.4f} | {resultado.max_milis:<10.4f} | {ips:<10.2f} | {resultado.memoria_bytes:<12}")
+        print(f"{nome:<10} | {resultado.media_ms:<10.4f} | {resultado.stats_min:<10.4f} | {resultado.stats_max:<10.4f} | {ips:<10.2f} | {resultado.memoria_usada:<12}")
 
     print("=========================================================================")
 
